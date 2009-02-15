@@ -2,6 +2,8 @@
 //  SPILDTopLayerView.m
 //  SPILDemo
 //
+//  Copyright 2009 Kelan Champagne. All rights reserved.
+//
 
 #import "SPILDTopLayerView.h"
 

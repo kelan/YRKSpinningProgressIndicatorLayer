@@ -20,6 +20,9 @@
 - (CGRect)finBoundsForCurrentBounds;
 - (CGPoint)finAnchorPointForCurrentBounds;
 
+- (void)setupAnimTimer;
+- (void)disposeAnimTimer;
+
 @end
 
 
@@ -104,27 +107,42 @@
     [self setNeedsDisplay];
 }
 
-- (void)startProgressAnimation {
-   _animationTimer = [[NSTimer timerWithTimeInterval:(NSTimeInterval)0.05
-                                              target:self
-                                            selector:@selector(advancePosition)
-                                            userInfo:nil
-                                             repeats:YES] retain];
-                                         
-   [_animationTimer setFireDate:[NSDate date]];
-   [[NSRunLoop currentRunLoop] addTimer:_animationTimer forMode:NSDefaultRunLoopMode];
-   [[NSRunLoop currentRunLoop] addTimer:_animationTimer forMode:NSEventTrackingRunLoopMode];
-   
-    self.hidden = NO;
-    _isRunning = YES;
+- (void)setupAnimTimer
+{
+    // Just to be safe kill any existing timer.
+    [self disposeAnimTimer];
+
+    // Why animate if not visible?  viewDidMoveToWindow will re-call this method when needed.
+    _animationTimer = [[NSTimer timerWithTimeInterval:(NSTimeInterval)0.05
+                                               target:self
+                                             selector:@selector(advancePosition)
+                                             userInfo:nil
+                                              repeats:YES] retain];
+
+    [_animationTimer setFireDate:[NSDate date]];
+    [[NSRunLoop currentRunLoop] addTimer:_animationTimer forMode:NSRunLoopCommonModes];
+    [[NSRunLoop currentRunLoop] addTimer:_animationTimer forMode:NSDefaultRunLoopMode];
+    [[NSRunLoop currentRunLoop] addTimer:_animationTimer forMode:NSEventTrackingRunLoopMode];
 }
 
-- (void)stopProgressAnimation {
+- (void)disposeAnimTimer
+{
     [_animationTimer invalidate];
     [_animationTimer release];
     _animationTimer = nil;
+}
+
+- (void)startProgressAnimation {
+    self.hidden = NO;
+    _isRunning = YES;
     
+    [self setupAnimTimer];
+}
+
+- (void)stopProgressAnimation {
     _isRunning = NO;
+
+    [self disposeAnimTimer];
     
     [self setNeedsDisplay];
 }

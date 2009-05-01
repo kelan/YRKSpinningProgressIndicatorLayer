@@ -28,27 +28,30 @@
 #pragma mark Init, Dealloc, etc
 //------------------------------------------------------------------------------
 
-- (void)dealloc {
+- (void)dealloc
+{
     [_rootLayer removeFromSuperlayer];
     [_rootLayer release];
-    
+
     [_progressIndicatorLayer removeFromSuperlayer];
-    [_plainBackgroundLayer removeFromSuperlayer];    
+    [_plainBackgroundLayer removeFromSuperlayer];
     [_qcBackgroundLayer removeFromSuperlayer];
-    
+
     [super dealloc];
 }
 
-- (void)awakeFromNib {
+- (void)awakeFromNib
+{
     [self setupLayers];
 }
 
 
-- (void)setupLayers {
+- (void)setupLayers
+{
     _rootLayer = [CALayer layer];
     [self setLayer:_rootLayer];
     [self setWantsLayer:YES];
-    
+
     // Create the plain background layer
     _plainBackgroundLayer = [CALayer layer];
     _plainBackgroundLayer.name = @"plainBackgroundLayer";
@@ -59,12 +62,12 @@
     _plainBackgroundLayer.zPosition = 0;
     _plainBackgroundLayer.backgroundColor = CGColorCreateFromNSColor([NSColor blueColor]);
     [_rootLayer addSublayer:_plainBackgroundLayer];
-    
+
     // Start with QC background
     [self useQCBackground];
-    
-    // Put a YRKSpinningProgressIndicatorLayer in front of everything
-    _progressIndicatorLayer = [[YRKSpinningProgressIndicatorLayer alloc] init];
+
+    // Put a SpinningProgressIndicatorLayer in front of everything
+    _progressIndicatorLayer = [[SpinningProgressIndicatorLayer alloc] init];
     _progressIndicatorLayer.name = @"progressIndicatorLayer";
     _progressIndicatorLayer.anchorPoint = CGPointMake(0.0, 0.0);
     _progressIndicatorLayer.position = CGPointMake(0, 0);
@@ -81,7 +84,8 @@
 #pragma mark Toggling Background
 //------------------------------------------------------------------------------
 
-- (IBAction)toggleBackground:(id)sender {
+- (IBAction)toggleBackground:(id)sender
+{
     if (nil == _qcBackgroundLayer) {
         [self useQCBackground];
     }
@@ -90,20 +94,22 @@
     }
 }
 
-- (void)usePlainBackground {
+- (void)usePlainBackground
+{
     // Hide the QC background and show the plain one
     [CATransaction begin];
     [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
     _qcBackgroundLayer.hidden = YES;
     _plainBackgroundLayer.hidden = NO;
     [CATransaction commit];
-    
+
     // destroy the QC background completely, so we can test the CPU usage of just the progress indicator itself
     [_qcBackgroundLayer removeFromSuperlayer];
     _qcBackgroundLayer = nil;
 }
 
-- (void)useQCBackground {
+- (void)useQCBackground
+{
     // Create the QC background layer
     _qcBackgroundLayer = [QCCompositionLayer compositionLayerWithFile:
                [[NSBundle mainBundle] pathForResource:@"Background" ofType:@"qtz"]];
@@ -114,7 +120,7 @@
     _qcBackgroundLayer.autoresizingMask = (kCALayerWidthSizable|kCALayerHeightSizable);
     _qcBackgroundLayer.zPosition = 0;
     [_rootLayer addSublayer:_qcBackgroundLayer];
-    
+
     // Hide the plain background and show the QC one
     [CATransaction begin];
     [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
@@ -123,7 +129,8 @@
     [CATransaction commit];
 }
 
-- (void)setPlainBackgroundColor:(NSColor *)newColor {
+- (void)setPlainBackgroundColor:(NSColor *)newColor
+{
     [CATransaction begin];
     [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
     _plainBackgroundLayer.backgroundColor = CGColorCreateFromNSColor(newColor);

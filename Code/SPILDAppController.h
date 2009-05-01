@@ -14,7 +14,7 @@
 @interface SPILDAppController : NSObject {
     IBOutlet NSWindow *_window;
     IBOutlet SPILDTopLayerView *_mainView;
-    
+
     IBOutlet NSButton *_startStopButton;
     IBOutlet NSColorWell *_fgColorWell;
     IBOutlet NSColorWell *_bgColorWell;

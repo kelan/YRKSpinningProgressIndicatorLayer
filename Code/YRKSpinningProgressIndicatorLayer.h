@@ -13,10 +13,10 @@
     BOOL _isRunning;
     NSTimer *_animationTimer;
     NSUInteger _position;
-    
+
     CGColorRef _foreColor;
     CGFloat _fadeDownOpacity;
-    
+
     NSUInteger _numFins;
     NSMutableArray *_finLayers;
 }

@@ -67,7 +67,7 @@
     [self useQCBackground];
 
     // Put a SpinningProgressIndicatorLayer in front of everything
-    _progressIndicatorLayer = [[SpinningProgressIndicatorLayer alloc] init];
+    _progressIndicatorLayer = [[YRKSpinningProgressIndicatorLayer alloc] init];
     _progressIndicatorLayer.name = @"progressIndicatorLayer";
     _progressIndicatorLayer.anchorPoint = CGPointMake(0.0, 0.0);
     _progressIndicatorLayer.position = CGPointMake(0, 0);

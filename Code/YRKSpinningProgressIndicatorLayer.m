@@ -140,6 +140,9 @@
 {
     self.hidden = NO;
     _isRunning = YES;
+    _position = _numFins - 1;
+    
+    [self setNeedsDisplay];
 
     [self setupAnimTimer];
 }

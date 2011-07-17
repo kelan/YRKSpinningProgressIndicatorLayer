@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		35948B0313D2768D00982A06 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35948B0113D2768D00982A06 /* MainMenu.xib */; };
 		761A37C50CF949C7006BD459 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761A37C30CF949C7006BD459 /* Quartz.framework */; };
 		761A37C60CF949C7006BD459 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761A37C40CF949C7006BD459 /* QuartzCore.framework */; };
 		763459CA0F47D3AB00C1B478 /* YRKSpinningProgressIndicatorLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 763459C80F47D3AB00C1B478 /* YRKSpinningProgressIndicatorLayer.m */; };
@@ -14,7 +15,6 @@
 		763459D00F47D3B300C1B478 /* SPILDAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 763459CD0F47D3B300C1B478 /* SPILDAppController.m */; };
 		763459D20F47D3BA00C1B478 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 763459D10F47D3BA00C1B478 /* main.m */; };
 		763459D50F47D3C600C1B478 /* Background.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 763459D30F47D3C600C1B478 /* Background.qtz */; };
-		763459D90F47D3E900C1B478 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 763459D70F47D3E900C1B478 /* MainMenu.nib */; };
 		763459F20F47D42A00C1B478 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 763459F00F47D42A00C1B478 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -26,6 +26,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		35948AF513D2754300982A06 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = Configs/debug.xcconfig; sourceTree = "<group>"; };
 		35948AF613D2754300982A06 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = Configs/release.xcconfig; sourceTree = "<group>"; };
+		35948B0213D2768D00982A06 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		761A37C30CF949C7006BD459 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
 		761A37C40CF949C7006BD459 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		7630041C0E0B614B00074CE5 /* SPILDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SPILDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -38,7 +39,6 @@
 		763459D10F47D3BA00C1B478 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Code/main.m; sourceTree = "<group>"; };
 		763459D30F47D3C600C1B478 /* Background.qtz */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = Background.qtz; path = Resources/Background.qtz; sourceTree = "<group>"; };
 		763459D40F47D3C600C1B478 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
-		763459D80F47D3E900C1B478 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Resources/English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		763459F10F47D42A00C1B478 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = Resources/English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -119,8 +119,8 @@
 			children = (
 				763459D30F47D3C600C1B478 /* Background.qtz */,
 				763459D40F47D3C600C1B478 /* Info.plist */,
+				35948B0113D2768D00982A06 /* MainMenu.xib */,
 				763459F00F47D42A00C1B478 /* InfoPlist.strings */,
-				763459D70F47D3E900C1B478 /* MainMenu.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -195,6 +195,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				English,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CATest */;
 			projectDirPath = "";
@@ -211,8 +212,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				763459D50F47D3C600C1B478 /* Background.qtz in Resources */,
-				763459D90F47D3E900C1B478 /* MainMenu.nib in Resources */,
 				763459F20F47D42A00C1B478 /* InfoPlist.strings in Resources */,
+				35948B0313D2768D00982A06 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,12 +234,12 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		763459D70F47D3E900C1B478 /* MainMenu.nib */ = {
+		35948B0113D2768D00982A06 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				763459D80F47D3E900C1B478 /* English */,
+				35948B0213D2768D00982A06 /* English */,
 			);
-			name = MainMenu.nib;
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 		763459F00F47D42A00C1B478 /* InfoPlist.strings */ = {

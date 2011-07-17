@@ -27,7 +27,7 @@
 
 // Properties and Accessors
 @property (readonly) BOOL isRunning;
-@property (readwrite, copy) NSColor *foreColor; // "copy" because we don't retain it -- we create a CGColor from it
+@property (readwrite, copy) NSColor *color;  // "copy" because we don't retain it -- we create a CGColor from it
 
 @end
 

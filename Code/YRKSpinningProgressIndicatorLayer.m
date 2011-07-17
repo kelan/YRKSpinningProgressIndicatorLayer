@@ -41,7 +41,7 @@
         _numFins = 12;
         _fadeDownOpacity = 0.0f;
         _isRunning = NO;
-        self.foreColor = [NSColor blackColor];
+        self.color = [NSColor blackColor];
         [self setBounds:CGRectMake(0.0f, 0.0f, 10.0f, 10.0f)];
         [self createFinLayers];
     }
@@ -50,7 +50,7 @@
 
 - (void)dealloc
 {
-    self.foreColor = nil;
+    self.color = nil;
     [self removeFinLayers];
 
     [super dealloc];
@@ -162,12 +162,12 @@
 @synthesize isRunning = _isRunning;
 
 // Can't use @synthesize because we need to convert NSColor <-> CGColor
-- (NSColor *)foreColor
+- (NSColor *)color
 {
     // Need to convert from CGColor to NSColor
     return  NSColorFromCGColorRef(_foreColor);
 }
-- (void)setForeColor:(NSColor *)newColor
+- (void)setColor:(NSColor *)newColor
 {
     // Need to convert from NSColor to CGColor
     CGColorRef cgColor = CGColorCreateFromNSColor(newColor);

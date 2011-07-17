@@ -36,7 +36,7 @@
 
 - (IBAction)pickNewForeColor:(id)sender
 {
-    [_mainView progressIndicatorLayer].foreColor = [sender color];
+    [_mainView progressIndicatorLayer].color = [sender color];
 }
 
 - (IBAction)pickNewBackColor:(id)sender

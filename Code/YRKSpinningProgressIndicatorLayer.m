@@ -276,6 +276,7 @@
 #pragma mark Helper Functions
 //------------------------------------------------------------------------------
 
+/// Note: This returns a CGColorRef that the caller needs to release.
 CGColorRef CGColorCreateFromNSColor(NSColor *nscolor)
 {
 // make this work with both 10.5 and 10.6 SDKs, based on a trick used

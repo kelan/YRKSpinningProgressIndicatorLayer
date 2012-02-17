@@ -44,6 +44,18 @@
     [_mainView setPlainBackgroundColor:[sender color]];
 }
 
+- (IBAction)selectProgressIndicatorType:(id)sender
+{
+    if ([[sender selectedCell] tag] == 1) {
+//        _mainView.progressIndicatorLayer.isIndeterminate = YES;
+    }
+    else if ([[sender selectedCell] tag] == 2) {
+//        _mainView.progressIndicatorLayer.isIndeterminate = NO;
+    }
+
+    [_mainView setNeedsDisplay:YES];
+}
+
 - (IBAction)startStopProgressIndicator:(id)sender
 {
     if ([[_mainView progressIndicatorLayer] isRunning]) {
@@ -58,5 +70,11 @@
     }
 }
 
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark Properties
+//------------------------------------------------------------------------------
+
+@synthesize mainView = _mainView;
 
 @end

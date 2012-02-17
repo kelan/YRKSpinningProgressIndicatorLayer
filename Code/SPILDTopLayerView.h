@@ -28,6 +28,7 @@
 // Properties
 @property (readonly) CALayer *rootLayer;
 @property (readonly) YRKSpinningProgressIndicatorLayer *progressIndicatorLayer;
+@property (assign) BOOL isAnimatingBackground;
 
 @end
 

@@ -23,6 +23,10 @@
 // IB Actions
 - (IBAction)pickNewForeColor:(id)sender;
 - (IBAction)pickNewBackColor:(id)sender;
+- (IBAction)selectProgressIndicatorType:(id)sender;
 - (IBAction)startStopProgressIndicator:(id)sender;
+
+// Properties
+@property (assign) IBOutlet SPILDTopLayerView *mainView;
 
 @end

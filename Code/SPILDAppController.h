@@ -18,6 +18,8 @@
     IBOutlet NSButton *_startStopButton;
     IBOutlet NSColorWell *_fgColorWell;
     IBOutlet NSColorWell *_bgColorWell;
+    
+    NSTimer *_determinateProgressTimer;
 }
 
 // IB Actions

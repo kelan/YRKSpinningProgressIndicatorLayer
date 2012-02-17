@@ -10,6 +10,14 @@
 #import "SPILDTopLayerView.h"
 #import "YRKSpinningProgressIndicatorLayer.h"
 
+@interface SPILDAppController ()
+
+// Helper Methods
+- (void)setupDeterminateProgressTimer;
+- (void)disposeDeterminateProgressTimer;
+
+@end
+
 @implementation SPILDAppController
 
 //------------------------------------------------------------------------------
@@ -47,10 +55,18 @@
 - (IBAction)selectProgressIndicatorType:(id)sender
 {
     if ([[sender selectedCell] tag] == 1) {
-//        _mainView.progressIndicatorLayer.isIndeterminate = YES;
+        _mainView.progressIndicatorLayer.isIndeterminate = YES;
+        if (_determinateProgressTimer != nil) {
+            [self disposeDeterminateProgressTimer];
+            [[_mainView progressIndicatorLayer] startProgressAnimation];
+        }
     }
     else if ([[sender selectedCell] tag] == 2) {
-//        _mainView.progressIndicatorLayer.isIndeterminate = NO;
+        _mainView.progressIndicatorLayer.isIndeterminate = NO;
+        if (_mainView.progressIndicatorLayer.isRunning) {
+            [[_mainView progressIndicatorLayer] stopProgressAnimation];
+            [self setupDeterminateProgressTimer];
+        }
     }
 
     [_mainView setNeedsDisplay:YES];
@@ -58,16 +74,61 @@
 
 - (IBAction)startStopProgressIndicator:(id)sender
 {
-    if ([[_mainView progressIndicatorLayer] isRunning]) {
+    if ([[_mainView progressIndicatorLayer] isRunning] || (_determinateProgressTimer != nil)) {
         // it is running, so stop it
-        [[_mainView progressIndicatorLayer] stopProgressAnimation];
+        if (_mainView.progressIndicatorLayer.isIndeterminate) {
+            [[_mainView progressIndicatorLayer] stopProgressAnimation];
+        }
+        else {
+            [self disposeDeterminateProgressTimer];
+            _mainView.progressIndicatorLayer.doubleValue = 0;
+        }
+
         [_startStopButton setTitle:@"Start"];
     }
     else {
         // it is stopped, so start it
-        [[_mainView progressIndicatorLayer] startProgressAnimation];
+        if (_mainView.progressIndicatorLayer.isIndeterminate) {
+            [[_mainView progressIndicatorLayer] startProgressAnimation];
+        } 
+        else {
+            [self setupDeterminateProgressTimer];
+        }
+
         [_startStopButton setTitle:@"Stop"];
     }
+}
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark Helpers
+//------------------------------------------------------------------------------
+
+- (void)advanceDeterminateTimer:(NSTimer *)timer {
+    // 200 times 0.05s should make a full progress in 10s.
+    _mainView.progressIndicatorLayer.doubleValue += 0.5f;
+
+    if (_mainView.progressIndicatorLayer.doubleValue >= 100)
+        _mainView.progressIndicatorLayer.doubleValue = 0;
+}
+
+- (void)setupDeterminateProgressTimer {
+    [self disposeDeterminateProgressTimer];
+    
+    _determinateProgressTimer = [[NSTimer alloc] initWithFireDate:[NSDate date] 
+                                                         interval:0.05f 
+                                                           target:self 
+                                                         selector:@selector(advanceDeterminateTimer:) 
+                                                         userInfo:nil 
+                                                          repeats:YES];
+    
+    [[NSRunLoop currentRunLoop] addTimer:_determinateProgressTimer forMode:NSRunLoopCommonModes];
+}
+
+- (void)disposeDeterminateProgressTimer {
+    [_determinateProgressTimer invalidate];
+    [_determinateProgressTimer release];
+    _determinateProgressTimer = nil;
 }
 
 //------------------------------------------------------------------------------

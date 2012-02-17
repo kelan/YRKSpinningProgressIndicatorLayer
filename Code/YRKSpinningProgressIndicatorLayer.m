@@ -14,6 +14,10 @@
 - (void)advancePosition;
 
 // Helper Methods
+- (void)setupType;
+- (void)setupIndeterminate;
+- (void)setupDeterminate;
+
 - (void)removeFinLayers;
 - (void)createFinLayers;
 
@@ -43,7 +47,12 @@
         _isRunning = NO;
         self.color = [NSColor blackColor];
         [self setBounds:CGRectMake(0.0f, 0.0f, 10.0f, 10.0f)];
-        [self createFinLayers];
+        self.isIndeterminate = YES;
+        self.doubleValue = 0;
+        self.maxValue = 100;
+        
+        [self addObserver:self forKeyPath:@"isIndeterminate" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionInitial context:nil];
+        [self addObserver:self forKeyPath:@"doubleValue" options:NSKeyValueObservingOptionNew context:nil];
     }
     return self;
 }
@@ -52,6 +61,8 @@
 {
     self.color = nil;
     [self removeFinLayers];
+    [self removeObserver:self forKeyPath:@"isIndeterminate"];
+    [self removeObserver:self forKeyPath:@"doubleValue"];
 
     [super dealloc];
 }
@@ -156,12 +167,55 @@
     [self setNeedsDisplay];
 }
 
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark Determinate indicator drawing
+//------------------------------------------------------------------------------
+
+- (void)drawInContext:(CGContextRef)ctx
+{
+    CGContextClearRect(ctx, self.bounds);
+
+    if (_isIndeterminate) {
+        [super drawInContext:ctx];
+        return;
+    }
+
+    CGFloat maxSize = (self.bounds.size.width >= self.bounds.size.height) ? self.bounds.size.height : self.bounds.size.width;
+    CGFloat lineWidth = 1 + (0.01 * maxSize);
+    CGPoint circleCenter = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
+    CGFloat circleRadius = (maxSize - lineWidth) / 2.1;
+
+    CGContextSetFillColorWithColor(ctx, _foreColor);
+    CGContextSetStrokeColorWithColor(ctx, _foreColor);
+    CGContextSetLineWidth(ctx, lineWidth);
+
+    CGContextBeginPath(ctx);
+    CGContextMoveToPoint(ctx, circleCenter.x + circleRadius, circleCenter.y);
+    CGContextAddEllipseInRect(ctx, CGRectMake(circleCenter.x-circleRadius, circleCenter.y-circleRadius, 2*circleRadius, 2*circleRadius));
+    CGContextClosePath(ctx);
+    CGContextStrokePath(ctx);
+
+    if (_doubleValue > 0) {
+        CGFloat pieRadius = circleRadius - 2 * lineWidth;
+        
+        CGContextBeginPath(ctx);
+        CGContextMoveToPoint(ctx, circleCenter.x, circleCenter.y);
+        CGContextAddLineToPoint(ctx, circleCenter.x, circleCenter.y+pieRadius);
+        CGContextAddArc(ctx, circleCenter.x, circleCenter.y, pieRadius, M_PI_2, M_PI_2 - (2*M_PI*(_doubleValue/_maxValue)), 1);
+        CGContextClosePath(ctx);
+        CGContextFillPath(ctx);
+    }
+}
 
 //------------------------------------------------------------------------------
 #pragma mark -
 #pragma mark Properties and Accessors
 //------------------------------------------------------------------------------
 
+@synthesize isIndeterminate = _isIndeterminate;
+@synthesize maxValue = _maxValue;
+@synthesize doubleValue = _doubleValue;
 @synthesize isRunning = _isRunning;
 
 // Can't use @synthesize because we need to convert NSColor <-> CGColor
@@ -187,6 +241,8 @@
         fin.backgroundColor = cgColor;
     }
     [CATransaction commit];
+    
+    [self setNeedsDisplay];
 }
 
 - (void)toggleProgressAnimation
@@ -204,6 +260,28 @@
 #pragma mark -
 #pragma mark Helper Methods
 //------------------------------------------------------------------------------
+
+- (void)setupType {
+    if (_isIndeterminate)
+        [self setupIndeterminate];
+    else
+        [self setupDeterminate];
+}
+
+- (void)setupIndeterminate {
+    [self createFinLayers];
+    if (_isRunning) {
+        [self setupAnimTimer];
+    }
+}
+
+- (void)setupDeterminate {
+    if (_isRunning) {
+        [self disposeAnimTimer];
+    }
+    [self removeFinLayers];
+    self.hidden = NO;
+}
 
 - (void)createFinLayers
 {
@@ -252,6 +330,7 @@
         [finLayer removeFromSuperlayer];
     }
     [_finLayers release];
+    _finLayers = nil;
 }
 
 - (CGRect)finBoundsForCurrentBounds
@@ -269,6 +348,21 @@
     CGFloat minSide = size.width > size.height ? size.height : size.width;
     CGFloat height = minSide * 0.30f;
     return CGPointMake(0.5, -0.9*(minSide-height)/minSide);
+}
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark KVO observing
+//------------------------------------------------------------------------------
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"isIndeterminate"]) {
+        [self setupType];
+        [self setNeedsDisplay];
+    }
+    else if ([keyPath isEqualToString:@"doubleValue"]) {
+        [self setNeedsDisplay];
+    }
 }
 
 @end

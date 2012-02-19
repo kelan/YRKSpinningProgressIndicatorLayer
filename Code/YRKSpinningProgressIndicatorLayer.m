@@ -47,12 +47,9 @@
         _isRunning = NO;
         self.color = [NSColor blackColor];
         [self setBounds:CGRectMake(0.0f, 0.0f, 10.0f, 10.0f)];
-        self.isIndeterminate = YES;
+        self.isDeterminate = NO;
         self.doubleValue = 0;
         self.maxValue = 100;
-        
-        [self addObserver:self forKeyPath:@"isIndeterminate" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionInitial context:nil];
-        [self addObserver:self forKeyPath:@"doubleValue" options:NSKeyValueObservingOptionNew context:nil];
     }
     return self;
 }
@@ -61,8 +58,6 @@
 {
     self.color = nil;
     [self removeFinLayers];
-    [self removeObserver:self forKeyPath:@"isIndeterminate"];
-    [self removeObserver:self forKeyPath:@"doubleValue"];
 
     [super dealloc];
 }
@@ -176,7 +171,7 @@
 {
     CGContextClearRect(ctx, self.bounds);
 
-    if (_isIndeterminate) {
+    if (!_isDeterminate) {
         [super drawInContext:ctx];
         return;
     }
@@ -213,9 +208,7 @@
 #pragma mark Properties and Accessors
 //------------------------------------------------------------------------------
 
-@synthesize isIndeterminate = _isIndeterminate;
 @synthesize maxValue = _maxValue;
-@synthesize doubleValue = _doubleValue;
 @synthesize isRunning = _isRunning;
 
 // Can't use @synthesize because we need to convert NSColor <-> CGColor
@@ -245,6 +238,28 @@
     [self setNeedsDisplay];
 }
 
+// Can't use @synthesize because we need the custom setters and atomic properties
+// cannot pair custom setters and synthesized getters.
+
+- (BOOL)isDeterminate {
+    return _isDeterminate;
+}
+
+- (void)setIsDeterminate:(BOOL)determinate {
+    _isDeterminate = determinate;
+    [self setupType];
+    [self setNeedsDisplay];
+}
+
+- (double)doubleValue {
+    return _doubleValue;
+}
+
+- (void)setDoubleValue:(double)doubleValue {
+    _doubleValue = doubleValue;
+    [self setNeedsDisplay];
+}
+
 - (void)toggleProgressAnimation
 {
     if (_isRunning) {
@@ -262,10 +277,10 @@
 //------------------------------------------------------------------------------
 
 - (void)setupType {
-    if (_isIndeterminate)
-        [self setupIndeterminate];
-    else
+    if (_isDeterminate)
         [self setupDeterminate];
+    else
+        [self setupIndeterminate];
 }
 
 - (void)setupIndeterminate {
@@ -348,21 +363,6 @@
     CGFloat minSide = size.width > size.height ? size.height : size.width;
     CGFloat height = minSide * 0.30f;
     return CGPointMake(0.5, -0.9*(minSide-height)/minSide);
-}
-
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark KVO observing
-//------------------------------------------------------------------------------
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"isIndeterminate"]) {
-        [self setupType];
-        [self setNeedsDisplay];
-    }
-    else if ([keyPath isEqualToString:@"doubleValue"]) {
-        [self setNeedsDisplay];
-    }
 }
 
 @end

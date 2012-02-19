@@ -55,14 +55,14 @@
 - (IBAction)selectProgressIndicatorType:(id)sender
 {
     if ([[sender selectedCell] tag] == 1) {
-        _mainView.progressIndicatorLayer.isIndeterminate = YES;
+        _mainView.progressIndicatorLayer.isDeterminate = NO;
         if (_determinateProgressTimer != nil) {
             [self disposeDeterminateProgressTimer];
             [[_mainView progressIndicatorLayer] startProgressAnimation];
         }
     }
     else if ([[sender selectedCell] tag] == 2) {
-        _mainView.progressIndicatorLayer.isIndeterminate = NO;
+        _mainView.progressIndicatorLayer.isDeterminate = YES;
         if (_mainView.progressIndicatorLayer.isRunning) {
             [[_mainView progressIndicatorLayer] stopProgressAnimation];
             [self setupDeterminateProgressTimer];
@@ -76,23 +76,23 @@
 {
     if ([[_mainView progressIndicatorLayer] isRunning] || (_determinateProgressTimer != nil)) {
         // it is running, so stop it
-        if (_mainView.progressIndicatorLayer.isIndeterminate) {
-            [[_mainView progressIndicatorLayer] stopProgressAnimation];
-        }
-        else {
+        if (_mainView.progressIndicatorLayer.isDeterminate) {
             [self disposeDeterminateProgressTimer];
             _mainView.progressIndicatorLayer.doubleValue = 0;
+        }
+        else {
+            [[_mainView progressIndicatorLayer] stopProgressAnimation];
         }
 
         [_startStopButton setTitle:@"Start"];
     }
     else {
         // it is stopped, so start it
-        if (_mainView.progressIndicatorLayer.isIndeterminate) {
-            [[_mainView progressIndicatorLayer] startProgressAnimation];
+        if (_mainView.progressIndicatorLayer.isDeterminate) {
+            [self setupDeterminateProgressTimer];
         } 
         else {
-            [self setupDeterminateProgressTimer];
+            [[_mainView progressIndicatorLayer] startProgressAnimation];
         }
 
         [_startStopButton setTitle:@"Stop"];

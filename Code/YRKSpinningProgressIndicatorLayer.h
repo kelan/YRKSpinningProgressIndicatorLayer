@@ -10,6 +10,8 @@
 
 
 @interface YRKSpinningProgressIndicatorLayer : CALayer {
+    BOOL _isDeterminate;
+
     BOOL _isRunning;
     NSTimer *_animationTimer;
     NSUInteger _position;
@@ -19,6 +21,9 @@
 
     NSUInteger _numFins;
     NSMutableArray *_finLayers;
+
+    double _maxValue;
+    double _doubleValue;
 }
 
 - (void)toggleProgressAnimation;
@@ -27,6 +32,9 @@
 
 // Properties and Accessors
 @property (readonly) BOOL isRunning;
+@property (assign) BOOL isDeterminate;
+@property (assign) double maxValue;
+@property (assign) double doubleValue;
 @property (readwrite, copy) NSColor *color;  // "copy" because we don't retain it -- we create a CGColor from it
 
 @end

@@ -14,6 +14,10 @@
 - (void)advancePosition;
 
 // Helper Methods
+- (void)setupType;
+- (void)setupIndeterminate;
+- (void)setupDeterminate;
+
 - (void)removeFinLayers;
 - (void)createFinLayers;
 
@@ -43,7 +47,9 @@
         _isRunning = NO;
         self.color = [NSColor blackColor];
         [self setBounds:CGRectMake(0.0f, 0.0f, 10.0f, 10.0f)];
-        [self createFinLayers];
+        self.isDeterminate = NO;
+        self.doubleValue = 0;
+        self.maxValue = 100;
     }
     return self;
 }
@@ -156,12 +162,53 @@
     [self setNeedsDisplay];
 }
 
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark Determinate indicator drawing
+//------------------------------------------------------------------------------
+
+- (void)drawInContext:(CGContextRef)ctx
+{
+    CGContextClearRect(ctx, self.bounds);
+
+    if (!_isDeterminate) {
+        [super drawInContext:ctx];
+        return;
+    }
+
+    CGFloat maxSize = (self.bounds.size.width >= self.bounds.size.height) ? self.bounds.size.height : self.bounds.size.width;
+    CGFloat lineWidth = 1 + (0.01 * maxSize);
+    CGPoint circleCenter = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
+    CGFloat circleRadius = (maxSize - lineWidth) / 2.1;
+
+    CGContextSetFillColorWithColor(ctx, _foreColor);
+    CGContextSetStrokeColorWithColor(ctx, _foreColor);
+    CGContextSetLineWidth(ctx, lineWidth);
+
+    CGContextBeginPath(ctx);
+    CGContextMoveToPoint(ctx, circleCenter.x + circleRadius, circleCenter.y);
+    CGContextAddEllipseInRect(ctx, CGRectMake(circleCenter.x-circleRadius, circleCenter.y-circleRadius, 2*circleRadius, 2*circleRadius));
+    CGContextClosePath(ctx);
+    CGContextStrokePath(ctx);
+
+    if (_doubleValue > 0) {
+        CGFloat pieRadius = circleRadius - 2 * lineWidth;
+        
+        CGContextBeginPath(ctx);
+        CGContextMoveToPoint(ctx, circleCenter.x, circleCenter.y);
+        CGContextAddLineToPoint(ctx, circleCenter.x, circleCenter.y+pieRadius);
+        CGContextAddArc(ctx, circleCenter.x, circleCenter.y, pieRadius, M_PI_2, M_PI_2 - (2*M_PI*(_doubleValue/_maxValue)), 1);
+        CGContextClosePath(ctx);
+        CGContextFillPath(ctx);
+    }
+}
 
 //------------------------------------------------------------------------------
 #pragma mark -
 #pragma mark Properties and Accessors
 //------------------------------------------------------------------------------
 
+@synthesize maxValue = _maxValue;
 @synthesize isRunning = _isRunning;
 
 // Can't use @synthesize because we need to convert NSColor <-> CGColor
@@ -187,6 +234,30 @@
         fin.backgroundColor = cgColor;
     }
     [CATransaction commit];
+    
+    [self setNeedsDisplay];
+}
+
+// Can't use @synthesize because we need the custom setters and atomic properties
+// cannot pair custom setters and synthesized getters.
+
+- (BOOL)isDeterminate {
+    return _isDeterminate;
+}
+
+- (void)setIsDeterminate:(BOOL)determinate {
+    _isDeterminate = determinate;
+    [self setupType];
+    [self setNeedsDisplay];
+}
+
+- (double)doubleValue {
+    return _doubleValue;
+}
+
+- (void)setDoubleValue:(double)doubleValue {
+    _doubleValue = doubleValue;
+    [self setNeedsDisplay];
 }
 
 - (void)toggleProgressAnimation
@@ -204,6 +275,28 @@
 #pragma mark -
 #pragma mark Helper Methods
 //------------------------------------------------------------------------------
+
+- (void)setupType {
+    if (_isDeterminate)
+        [self setupDeterminate];
+    else
+        [self setupIndeterminate];
+}
+
+- (void)setupIndeterminate {
+    [self createFinLayers];
+    if (_isRunning) {
+        [self setupAnimTimer];
+    }
+}
+
+- (void)setupDeterminate {
+    if (_isRunning) {
+        [self disposeAnimTimer];
+    }
+    [self removeFinLayers];
+    self.hidden = NO;
+}
 
 - (void)createFinLayers
 {
@@ -252,6 +345,7 @@
         [finLayer removeFromSuperlayer];
     }
     [_finLayers release];
+    _finLayers = nil;
 }
 
 - (CGRect)finBoundsForCurrentBounds

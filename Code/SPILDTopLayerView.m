@@ -88,10 +88,10 @@
 
 - (IBAction)toggleBackground:(id)sender
 {
-    if (nil == _qcBackgroundLayer) {
+    if ([[sender selectedCell] tag] == 1) {
         [self useQCBackground];
     }
-    else {
+    else if ([[sender selectedCell] tag] == 2) {
         [self usePlainBackground];
     }
 }
@@ -108,6 +108,8 @@
     // destroy the QC background completely, so we can test the CPU usage of just the progress indicator itself
     [_qcBackgroundLayer removeFromSuperlayer];
     _qcBackgroundLayer = nil;
+    
+    self.isAnimatingBackground = NO;
 }
 
 - (void)useQCBackground
@@ -129,6 +131,8 @@
     _qcBackgroundLayer.hidden = NO;
     _plainBackgroundLayer.hidden = YES;
     [CATransaction commit];
+
+    self.isAnimatingBackground = YES;
 }
 
 - (void)setPlainBackgroundColor:(NSColor *)newColor
@@ -148,5 +152,6 @@
 //------------------------------------------------------------------------------
 @synthesize rootLayer = _rootLayer;
 @synthesize progressIndicatorLayer = _progressIndicatorLayer;
+@synthesize isAnimatingBackground = _isAnimatingBackground;
 
 @end
